@@ -122,13 +122,15 @@ All experiments, parameters, metrics, and artifacts are tracked using MLflow and
 ## 📷 Screenshots
 
 ### Experiment 1 Output
-![Experiment 1 Output](./screenshots/exp1_output.png)
+![image](https://github.com/user-attachments/assets/5e82a4c9-fb4a-4104-8719-a8e853d99a9c)
+
 
 ### Experiment 2 Output
-![Experiment 2 Output](./screenshots/exp2_output.png)
+![image](https://github.com/user-attachments/assets/b1e0e53c-fd86-4b7d-8bd2-631d7675f1c0)
 
 ### Experiment 3 Output
-![Experiment 3 Output](./screenshots/exp3_output.png)
+![image](https://github.com/user-attachments/assets/e6360b64-2d16-410c-8029-c280bc081f54)
+
 
 ---
 
