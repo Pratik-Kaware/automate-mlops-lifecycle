@@ -21,8 +21,8 @@ warnings.filterwarnings("ignore")
 # os.environ["MLFLOW_DISABLE_ARTIFACTS_DOWNLOAD"] = "1"
 
 # Set MLflow Tracking URI & DAGsHub integration
-MLFLOW_TRACKING_URI = "https://dagshub.com/vikashdas770/YT-Capstone-Project.mlflow"
-dagshub.init(repo_owner="vikashdas770", repo_name="YT-Capstone-Project", mlflow=True)
+MLFLOW_TRACKING_URI = "https://dagshub.com/Pratik-Kaware/automate-mlops-lifecycle.mlflow"
+dagshub.init(repo_owner="Pratik-Kaware", repo_name="automate-mlops-lifecycle", mlflow=True)
 mlflow.set_tracking_uri(MLFLOW_TRACKING_URI)
 mlflow.set_experiment("LoR Hyperparameter Tuning")
 
@@ -65,7 +65,7 @@ def load_and_prepare_data(filepath):
     
     return train_test_split(X, y, test_size=0.2, random_state=42), vectorizer
 
-
+# ========================== algortihm and vectorization combination finalized in exp2_bow_vs_tfidf.py here we are just using LoR with hyperparameter tuning
 # ==========================
 # Train & Log Model
 # ==========================
