@@ -8,6 +8,11 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+    
+    - name: List files after checkout
+      run: |
+        pwd
+        ls -R
 
     - name: Set up Python
       uses: actions/setup-python@v5
