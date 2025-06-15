@@ -23,6 +23,6 @@ jobs:
           ${{ runner.os }}-pip- 
 
     - name: run dvc pipeline
-      env: 
-        TEST_ENV: ${{ secrets.TEST_ENV }}
+      # env: 
+      #   TEST_ENV: ${{ secrets.TEST_ENV }}
       run: dvc repro
