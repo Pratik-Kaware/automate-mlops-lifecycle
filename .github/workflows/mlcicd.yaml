@@ -1,6 +1,13 @@
 name: MLCI-Pipeline 
 
-on: push
+on: 
+  push:
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - 'README.md'
+      - 'project-flow.txt'
+      - '**.rst'
 
 jobs: 
   project-testing:

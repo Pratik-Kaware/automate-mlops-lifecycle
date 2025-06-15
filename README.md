@@ -1,14 +1,14 @@
 # Automate MLOps Lifecycle: IMDB Sentiment Analysis
 
-Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrates a complete, production-grade MLOps workflow for text classification using the IMDB movie reviews dataset. The project covers data preprocessing, feature engineering, model training, experiment tracking, and result visualization, all automated and reproducible.
+Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrates a full MLOps workflow for text sentiment classification using the IMDB dataset, with robust experiment tracking, CI/CD, containerization, and cloud deployment.
 
 ---
 
 ## 🚀 Project Overview
 
 - **Goal:** Predict sentiment (positive/negative) from IMDB movie reviews.
-- **Tech Stack:** Python, scikit-learn, pandas, NLTK, MLflow, DagsHub, Jupyter, VS Code.
-- **MLOps:** Automated experiment tracking, artifact logging, and reproducible pipelines.
+- **Tech Stack:** Python, scikit-learn, pandas, NLTK, Flask, MLflow, DagsHub, DVC, Docker, GitHub Actions, AWS ECR.
+- **MLOps:** Automated data versioning, experiment tracking, model registry, CI/CD, and containerized deployment.
 
 ---
 
@@ -16,78 +16,153 @@ Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrate
 
 ```
 .
-├── data/                # (gitignored) Raw and processed datasets
-├── notebooks/
-│   ├── exp1.ipynb       # Baseline: Logistic Regression with Bag-of-Words
-│   ├── exp2_bow_vs_tfidf.py  # Compare BoW vs TF-IDF, multiple algorithms
-│   └── exp3_hyperparam_tuning.py # Hyperparameter tuning experiments
+├── src/
+│   ├── data/
+│   │   ├── data_ingestion.py
+│   │   └── data_preprocessing.py
+│   ├── features/
+│   │   └── feature_engineering.py
+│   ├── model/
+│   │   ├── model_building.py
+│   │   ├── model_evaluation.py
+│   │   ├── register_model.py
+│   │   └── ...
+│   ├── logger/
+│   └── ...
+├── flask_app/
+│   ├── app.py
+│   ├── requirements.txt
+│   └── templates/
+│       └── index.html
+├── models/
+│   └── vectorizer.pkl
+├── data/
+│   └── (raw/interim/processed data - DVC tracked)
+├── reports/
+│   ├── metrics.json
+│   ├── experiment_info.json
+│   └── figures/
+├── tests/
+│   ├── test_model.py
+│   └── test_flask_app.py
+├── scripts/
+│   └── promote_model.py
+├── dvc.yaml
+├── params.yaml
 ├── requirements.txt
+├── dockerfile
 ├── .gitignore
+├── .github/workflows/mlcicd.yaml
 └── README.md
 ```
 
 ---
 
-## 📊 Experiments & Results
+## ⚙️ End-to-End MLOps Workflow
 
-### 1️⃣ Experiment 1: Baseline Logistic Regression (Bag-of-Words)
+### 1. **Data Ingestion & Preprocessing**
+- Download and split IMDB data.
+- Clean and normalize text (lowercase, remove stopwords, lemmatize, etc.).
+- Scripts: `src/data/data_ingestion.py`, `src/data/data_preprocessing.py`
 
-- **Preprocessing:** Lowercasing, stopword removal, lemmatization, punctuation/number/url removal.
-- **Feature Engineering:** Bag-of-Words (CountVectorizer, 50 features).
-- **Model:** Logistic Regression
-- **Tracking:** MLflow on DagsHub
+### 2. **Feature Engineering**
+- Transform text using Bag-of-Words or TF-IDF.
+- Save vectorizer for inference.
+- Script: `src/features/feature_engineering.py`
 
-**Result Visualization:**
+### 3. **Model Building & Evaluation**
+- Train ML models (e.g., Logistic Regression).
+- Evaluate with metrics (accuracy, precision, recall, AUC).
+- Log metrics and models to MLflow (DagsHub backend).
+- Scripts: `src/model/model_building.py`, `src/model/model_evaluation.py`
 
-![Experiment 1 Output](./screenshots/exp1_output.png)
+### 4. **Model Registration**
+- Register the best model to MLflow Model Registry on DagsHub.
+- Script: `src/model/register_model.py`
 
-*Interpretation:*  
-Parallel coordinates plot showing how model hyperparameters (C, penalty) affect accuracy.
+### 5. **Flask App for Inference**
+- REST API for sentiment prediction.
+- Loads model and vectorizer from artifacts.
+- Monitors with Prometheus metrics.
+- App: `flask_app/app.py`
 
----
+### 6. **Testing**
+- Unit tests for model and Flask app.
+- Directory: `tests/`
 
-### 2️⃣ Experiment 2: BoW vs TF-IDF, Multiple Algorithms
+### 7. **CI/CD Pipeline**
+- Automated with GitHub Actions:
+  - Runs DVC pipeline, tests, model promotion, and containerization.
+  - Pushes Docker image to AWS ECR.
+- Workflow: `.github/workflows/mlcicd.yaml`
 
-- **Feature Engineering:** Compare Bag-of-Words vs TF-IDF.
-- **Algorithms:** Logistic Regression, MultinomialNB, XGBoost, RandomForest, GradientBoosting.
-- **Automated MLflow tracking:** All combinations logged as nested runs.
-
-**Result Visualization:**
-
-![Experiment 2 Output](./screenshots/exp2_output.png)
-
-*Interpretation:*  
-Parallel coordinates plot comparing algorithms and their hyperparameters.
-
----
-
-### 3️⃣ Experiment 3: Hyperparameter Tuning
-
-- **Grid search** over key hyperparameters (e.g., number of features, test size, regularization).
-- **Automated experiment logging** for each configuration.
-
-**Result Visualization:**
-
-![Experiment 3 Output](./screenshots/exp3_output.png)
-
-*Interpretation:*  
-Parallel coordinates plot showing the impact of feature count and test size on precision.
+### 8. **Containerization**
+- Dockerfile builds a lightweight image for the Flask app.
+- Supports both development and production (Gunicorn) runs.
 
 ---
 
 ## 🛠️ Key Features
 
-- **Automated Data Preprocessing:** Modular, reusable text cleaning pipeline.
-- **Flexible Feature Engineering:** Easily switch between BoW and TF-IDF.
-- **Multiple Algorithms:** Out-of-the-box support for classic and ensemble models.
-- **Experiment Tracking:** MLflow integration with DagsHub for full reproducibility.
-- **Artifact Logging:** Models and metrics logged for every run.
-- **Visual Analytics:** Parallel coordinates plots for insightful model comparison.
-- **Production-Ready Structure:** Clean code, clear separation of concerns, and extensible design.
+- **Data Versioning:** DVC tracks all data and model artifacts.
+- **Experiment Tracking:** MLflow logs all runs, metrics, and artifacts to DagsHub.
+- **Model Registry:** Models are versioned and promoted via MLflow Model Registry.
+- **CI/CD:** GitHub Actions automates testing, model promotion, and Docker builds.
+- **Cloud Deployment:** Docker images are pushed to AWS ECR for scalable deployment.
+- **Monitoring:** Prometheus metrics for app and model monitoring.
+- **Reproducibility:** All parameters tracked in `params.yaml` and DVC pipeline.
 
 ---
 
-## 🏁 Getting Started
+## 📈 Example Experiment Visualizations
+
+### Experiment 1: Hyperparameter Tuning
+![Experiment 1 Output](./screenshots/exp1_output.png)
+
+### Experiment 2: Algorithm Comparison
+![Experiment 2 Output](./screenshots/exp2_output.png)
+
+### Experiment 3: Feature Engineering Impact
+![Experiment 3 Output](./screenshots/exp3_output.png)
+
+---
+
+## 🐳 Docker & Deployment
+
+**Build and run locally:**
+```sh
+docker build -t imdb-mlops:latest .
+docker run -p 8888:5000 -e DAGSHUB_TOKEN=<your_token> imdb-mlops:latest
+```
+
+**Production run (uncomment Gunicorn CMD in Dockerfile):**
+```dockerfile
+# CMD ["gunicorn", "-b", "0.0.0.0:5000", "--timeout", "120", "app:app"]
+```
+
+---
+
+## 🚦 CI/CD Pipeline (GitHub Actions)
+
+- **project-testing job:**  
+  - Checks out code, installs dependencies, runs DVC pipeline, tests, and uploads build context as an artifact.
+- **Containerize job:**  
+  - Downloads artifact, builds Docker image, logs in to AWS ECR, and pushes the image.
+
+**Secrets required:**
+- `DAGSHUB_TOKEN` (as `TEST_ENV`)
+- `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `ECR_REPOSITORY`, `AWS_ACCOUNT_ID`
+
+---
+
+## 📦 DVC Pipeline
+
+- **dvc.yaml** defines all stages: data-ingestion, data-preprocessing, feature-engineering, model-building, model-evaluation, model-registration.
+- **params.yaml** tracks all key parameters (e.g., `test_size`, `max_features`).
+
+---
+
+## 📝 How to Reproduce
 
 1. **Clone the repo**
    ```sh
@@ -95,42 +170,57 @@ Parallel coordinates plot showing the impact of feature count and test size on p
    cd automate-mlops-lifecycle
    ```
 
-2. **Set up your environment**
+2. **Set up environment**
    ```sh
    conda create -n atlas311 python=3.11
    conda activate atlas311
    pip install -r requirements.txt
    ```
 
-3. **Prepare the data**
-   - Place your IMDB dataset as `IMDB.csv` in the project root.
-   - Run the data sampling cell in `exp1.ipynb` to generate `notebooks/data.csv`.
+3. **Configure DVC and MLflow**
+   - Set up DagsHub and AWS credentials as described above.
 
-4. **Run experiments**
-   - **Baseline:** Open and run `notebooks/exp1.ipynb`.
-   - **BoW vs TF-IDF:** `python notebooks/exp2_bow_vs_tfidf.py`
-   - **Hyperparameter Tuning:** `python notebooks/exp3_hyperparam_tuning.py`
+4. **Run DVC pipeline**
+   ```sh
+   dvc repro
+   ```
+
+5. **Run Flask app locally**
+   ```sh
+   cd flask_app
+   python app.py
+   ```
+
+6. **Run tests**
+   ```sh
+   python -m unittest tests/test_model.py
+   python -m unittest tests/test_flask_app.py
+   ```
+
+7. **Build and run Docker image**
+   ```sh
+   docker build -t imdb-mlops:latest .
+   docker run -p 8888:5000 -e DAGSHUB_TOKEN=<your_token> imdb-mlops:latest
+   ```
 
 ---
 
-## 📈 MLflow Tracking
+## 📊 MLOps Lifecycle Diagram
 
-All experiments, parameters, metrics, and artifacts are tracked using MLflow and visualized on [DagsHub](https://dagshub.com/Pratik-Kaware/automate-mlops-lifecycle.mlflow).
-
----
-
-## 📷 Screenshots
-
-### Experiment 1 Output
-![image](https://github.com/user-attachments/assets/5e82a4c9-fb4a-4104-8719-a8e853d99a9c)
-
-
-### Experiment 2 Output
-![image](https://github.com/user-attachments/assets/b1e0e53c-fd86-4b7d-8bd2-631d7675f1c0)
-
-### Experiment 3 Output
-![image](https://github.com/user-attachments/assets/e6360b64-2d16-410c-8029-c280bc081f54)
-
+```mermaid
+flowchart TD
+    A[Data Ingestion<br>src/data/data_ingestion.py] --> B[Data Preprocessing<br>src/data/data_preprocessing.py]
+    B --> C[Feature Engineering<br>src/features/feature_engineering.py]
+    C --> D[Model Building<br>src/model/model_building.py]
+    D --> E[Model Evaluation<br>src/model/model_evaluation.py]
+    E --> F[Model Registration<br>src/model/register_model.py]
+    D --> G[Experiment Tracking<br>MLflow + DagsHub]
+    E --> G
+    F --> G
+    C --> H[Flask App<br>flask_app/app.py]
+    H --> I[Docker Container]
+    I --> J[AWS ECR]
+```
 
 ---
 
