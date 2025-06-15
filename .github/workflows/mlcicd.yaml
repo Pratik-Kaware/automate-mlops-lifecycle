@@ -32,5 +32,5 @@ jobs:
 
     - name: run dvc pipeline
       env: 
-        TEST_ENV: ${{ secrets.TEST_ENV }}
+        DAGSHUB_TOKEN: ${{ secrets.TEST_ENV }}
       run: dvc repro
