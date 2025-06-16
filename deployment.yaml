@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: mlops-proj
-        image: 020866158197.dkr.ecr.ap-south-1.amazonaws.com/mlops-proj:latest
+        image: IMAGE_PLACEHOLDER
         ports:
         - containerPort: 5000
         resources:
