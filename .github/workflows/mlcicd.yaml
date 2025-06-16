@@ -139,7 +139,7 @@ jobs:
       - name: Create k8s secret
         run: |
          kubectl create secret generic test-env \
-            --from-literal=TEST_ENV=${{ secrets.TEST_ENV }} --dry-run=client -o yaml | kubectl apply -f -
+            --from-literal=DAGSHUB_TOKEN=${{ secrets.TEST_ENV }} --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Update the deployment.yaml 
         run: |
