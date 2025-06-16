@@ -134,7 +134,7 @@ jobs:
 
       - name: Update Kubeconfig
         run: | 
-          aws eks update-kubecofig --region ap-south-1 --name imdb-predict-cluster
+          aws eks update-kubeconfig --region ap-south-1 --name imdb-predict-cluster
 
       - name: Create k8s secret
         run: |
