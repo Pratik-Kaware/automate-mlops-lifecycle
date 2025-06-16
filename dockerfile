@@ -19,9 +19,9 @@ EXPOSE 5000
 
 # Local Run 
 
-CMD ["python", "app.py"]
+# CMD ["python", "app.py"]
 
 
 # Prod run 
 
-# CMD ["gunicorn", "-b", "0.0.0:5000", "--timeout", "120", "app:app"]
+CMD ["gunicorn", "-b", "0.0.0:5000", "--timeout", "120", "app:app"]
