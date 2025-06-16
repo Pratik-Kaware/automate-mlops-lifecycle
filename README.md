@@ -1,14 +1,14 @@
 # Automate MLOps Lifecycle: IMDB Sentiment Analysis
 
-Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrates a full MLOps workflow for text sentiment classification using the IMDB dataset, with robust experiment tracking, CI/CD, containerization, and cloud deployment.
+Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrates a full MLOps workflow for text sentiment classification using the IMDB dataset, with robust experiment tracking, CI/CD, containerization, cloud deployment, and production-grade monitoring with Prometheus and Grafana.
 
 ---
 
 ## 🚀 Project Overview
 
 - **Goal:** Predict sentiment (positive/negative) from IMDB movie reviews.
-- **Tech Stack:** Python, scikit-learn, pandas, NLTK, Flask, MLflow, DagsHub, DVC, Docker, GitHub Actions, AWS ECR.
-- **MLOps:** Automated data versioning, experiment tracking, model registry, CI/CD, and containerized deployment.
+- **Tech Stack:** Python, scikit-learn, pandas, NLTK, Flask, MLflow, DagsHub, DVC, Docker, GitHub Actions, AWS ECR, **Prometheus, Grafana**.
+- **MLOps:** Automated data versioning, experiment tracking, model registry, CI/CD, containerized deployment, and monitoring with dashboards.
 
 ---
 
@@ -83,7 +83,7 @@ Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrate
 ### 5. **Flask App for Inference**
 - REST API for sentiment prediction.
 - Loads model and vectorizer from artifacts.
-- Monitors with Prometheus metrics.
+- **Monitors with Prometheus metrics.**
 - App: `flask_app/app.py`
 
 ### 6. **Testing**
@@ -100,6 +100,11 @@ Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrate
 - Dockerfile builds a lightweight image for the Flask app.
 - Supports both development and production (Gunicorn) runs.
 
+### 9. **Monitoring & Dashboarding**
+- **Prometheus** scrapes metrics from the Flask app (e.g., request count, latency, error rate).
+- **Grafana** visualizes these metrics with custom dashboards for real-time monitoring of model and API health.
+- See [Monitoring & Dashboarding](#-monitoring--dashboarding-with-prometheus--grafana) for setup and example dashboards.
+
 ---
 
 ## 🛠️ Key Features
@@ -109,7 +114,7 @@ Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrate
 - **Model Registry:** Models are versioned and promoted via MLflow Model Registry.
 - **CI/CD:** GitHub Actions automates testing, model promotion, and Docker builds.
 - **Cloud Deployment:** Docker images are pushed to AWS ECR for scalable deployment.
-- **Monitoring:** Prometheus metrics for app and model monitoring.
+- **Monitoring:** Prometheus metrics for app and model monitoring, visualized in Grafana dashboards.
 - **Reproducibility:** All parameters tracked in `params.yaml` and DVC pipeline.
 
 ---
@@ -124,6 +129,39 @@ Welcome to the **Automate MLOps Lifecycle** project! This repository demonstrate
 
 ### Experiment 3: Feature Engineering Impact
 ![Experiment 3 Output](./screenshots/exp3_output.png)
+
+---
+
+## 🖥️ Monitoring & Dashboarding with Prometheus & Grafana
+
+### **Prometheus Integration**
+- The Flask app exposes a `/metrics` endpoint compatible with Prometheus.
+- Prometheus is configured to scrape metrics from the Flask app (request count, latency, error rate, etc.).
+- Example Prometheus scrape config:
+    ```yaml
+    scrape_configs:
+      - job_name: "flask-app"
+        static_configs:
+          - targets: ["<your-flask-app-host>:5000"]
+    ```
+
+### **Grafana Dashboards**
+- Grafana connects to Prometheus as a data source.
+- Custom dashboards visualize:
+  - API request rates
+  - Latency and response times
+  - Error rates
+  - Model prediction statistics
+
+#### **Sample Dashboard**
+![Grafana Dashboard Example](./screenshots/grafana_dashboard.png)
+
+### **Setup Steps**
+1. **Install Prometheus and Grafana** on your server or cloud instance.
+2. **Configure Prometheus** with the correct `prometheus.yml` (see above).
+3. **Start Prometheus and Grafana** services.
+4. **Add Prometheus as a data source** in Grafana.
+5. **Import or create dashboards** to visualize your metrics.
 
 ---
 
@@ -203,6 +241,11 @@ docker run -p 8888:5000 -e DAGSHUB_TOKEN=<your_token> imdb-mlops:latest
    docker run -p 8888:5000 -e DAGSHUB_TOKEN=<your_token> imdb-mlops:latest
    ```
 
+8. **Set up Monitoring (Prometheus & Grafana)**
+   - Install Prometheus and Grafana.
+   - Configure Prometheus to scrape the Flask app.
+   - Add Prometheus as a data source in Grafana and import dashboards.
+
 ---
 
 ## 📊 MLOps Lifecycle Diagram
@@ -220,9 +263,11 @@ flowchart TD
     C --> H[Flask App<br>flask_app/app.py]
     H --> I[Docker Container]
     I --> J[AWS ECR]
+    H --> K[Prometheus & Grafana Monitoring]
 ```
 
 ---
+
 ## 🐞 Debugging & Troubleshooting Guide
 
 When deploying to Kubernetes, we used the following systematic debug approach:
@@ -262,7 +307,6 @@ When deploying to Kubernetes, we used the following systematic debug approach:
 
 **Tip:**  
 Always align your secret keys and environment variable names between your CI/CD pipeline, Kubernetes secrets, and your application code
-
 
 ## 🤝 Contributing
 
