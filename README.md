@@ -223,6 +223,46 @@ flowchart TD
 ```
 
 ---
+## 🐞 Debugging & Troubleshooting Guide
+
+When deploying to Kubernetes, we used the following systematic debug approach:
+
+1. **Check Pod Status:**  
+   Use `kubectl get pods` and `kubectl describe pod <pod-name>` to identify scheduling or crash issues.
+
+2. **Inspect Pod Logs:**  
+   Run `kubectl logs <pod-name>` to view application errors and stack traces.
+
+3. **Verify Environment Variables:**  
+   Ensure all required environment variables (like `DAGSHUB_TOKEN`) are set in your deployment manifest and correctly mapped from Kubernetes secrets.
+
+4. **Check Secret Mapping:**  
+   Make sure the secret key in Kubernetes matches the environment variable expected by your app.  
+   Example:  
+   ```yaml
+   env:
+     - name: DAGSHUB_TOKEN
+       valueFrom:
+         secretKeyRef:
+           name: test-env
+           key: DAGSHUB_TOKEN
+   ```
+
+5. **Update or Create Secrets:**  
+   Use the following command to create/update the secret with the correct key:
+   ```sh
+   kubectl create secret generic test-env \
+     --from-literal=DAGSHUB_TOKEN=<your_token> --dry-run=client -o yaml | kubectl apply -f -
+   ```
+
+6. **Redeploy and Monitor:**  
+   After making changes, re-apply your deployment and monitor pod status and logs.
+
+---
+
+**Tip:**  
+Always align your secret keys and environment variable names between your CI/CD pipeline, Kubernetes secrets, and your application code
+
 
 ## 🤝 Contributing
 
